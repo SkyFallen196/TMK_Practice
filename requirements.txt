@@ -7,3 +7,7 @@ jupyter
 pypdf
 python-dotenv
 yandex-chain
+nbformat 
+nbconvert
+telegram
+python-telegram-bot
