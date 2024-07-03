@@ -2,10 +2,10 @@ import os
 from dotenv import load_dotenv
 from telegram import Update, ForceReply
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, CallbackContext
-from yandex_gpt_python_format import get_response
+from gemeni_python_format import get_response
 
 load_dotenv('.env')
-TELEGRAM_API_KEY = os.getenv('TELEGRAM_API_KEY_YANDEX')
+TELEGRAM_API_KEY = os.getenv('TELEGRAM_API_KEY_GOOGLE')
 
 async def start(update: Update, context: CallbackContext) -> None:
     user = update.effective_user
