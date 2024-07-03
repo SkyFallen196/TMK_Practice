@@ -6,3 +6,4 @@ langchain_community
 jupyter
 pypdf
 python-dotenv
+yandex-chain
