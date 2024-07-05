@@ -13,6 +13,19 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
                     level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+def escape_latex(text: str) -> str:
+    escape_chars = ['\\', '.', '-', '=', '_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '!', '{', '}', '$']
+    for char in escape_chars:
+        text = text.replace(char, f'\\{char}')
+    return text
+
+def convert_latex_to_human_readable(latex: str) -> str:
+    human_readable = latex.replace(r'\frac{', '(').replace(r'}{', ') / (').replace(r'}', ')')
+    human_readable = human_readable.replace(r'\cdot', '⋅')
+    human_readable = human_readable.replace(r'\left', '').replace(r'\right', '')
+    human_readable = human_readable.replace('$$', '').replace('$', '')
+    return human_readable
+
 async def start(update: Update, context: CallbackContext) -> None:
     user = update.effective_user
     await update.message.reply_markdown_v2(
@@ -25,7 +38,11 @@ async def handle_message(update: Update, context: CallbackContext) -> None:
         await context.bot.send_chat_action(chat_id=update.effective_chat.id, action=ChatAction.TYPING)
         user_message = update.message.text
         response = get_response(user_message)
-        await update.message.reply_text(response, parse_mode="Markdown")
+
+        human_readable_response = convert_latex_to_human_readable(response)
+        escaped_response = escape_latex(human_readable_response)
+
+        await update.message.reply_markdown_v2(f"{escaped_response}")
 
     except Exception as e:
         logger.error(f"Exception: {str(e)}")

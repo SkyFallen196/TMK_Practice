@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
-from langchain_community.document_loaders import PyPDFLoader
+from langchain_community.document_loaders import PyPDFLoader, UnstructuredMarkdownLoader, ToMarkdownLoader
 from langchain.prompts.prompt import PromptTemplate
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains.retrieval import create_retrieval_chain
@@ -17,8 +17,8 @@ llm = ChatGoogleGenerativeAI(model="models/gemini-pro")
 
 embedding = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
 
-pdf_directory = "data/"
-pdf_files = [f for f in os.listdir(pdf_directory) if f.endswith('.pdf')]
+md_directory = "data/"
+md_files = [f for f in os.listdir(md_directory) if f.endswith('.md')]
 
 text_splitter = CharacterTextSplitter(
     separator=".",
@@ -30,9 +30,9 @@ text_splitter = CharacterTextSplitter(
 
 all_pages = []
 
-for pdf_file in pdf_files:
-    pdf_path = os.path.join(pdf_directory, pdf_file)
-    loader = PyPDFLoader(pdf_path)
+for md_file in md_files:
+    md_path = os.path.join(md_directory, md_file)
+    loader = UnstructuredMarkdownLoader(md_path)
     pages = loader.load_and_split(text_splitter)
     all_pages.extend(pages)
 

@@ -11,3 +11,5 @@ nbformat
 nbconvert
 telegram
 python-telegram-bot
+unstructured
+markdown
