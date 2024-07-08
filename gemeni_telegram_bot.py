@@ -1,5 +1,6 @@
 import logging
 import os
+import re
 from dotenv import load_dotenv
 from telegram import Update, ForceReply
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, CallbackContext
@@ -14,16 +15,48 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 logger = logging.getLogger(__name__)
 
 def escape_latex(text: str) -> str:
+    """
+    Эта функция заменяет специальные символы в строке на их экранированные версии.
+
+    Args:
+        text (str): входная строка.
+
+    Returns:
+        str: выходная строка с замененными символами.
+    """
     escape_chars = ['\\', '.', '-', '=', '_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '!', '{', '}', '$']
     for char in escape_chars:
         text = text.replace(char, f'\\{char}')
     return text
 
 def convert_latex_to_human_readable(latex: str) -> str:
+    """
+    Эта функция преобразует строку в формате LaTeX в более понятный для человека формат.
+
+    Args:
+        latex (str): входная строка в формате LaTeX.
+
+    Returns:
+        str: выходная строка в более понятном для человека формате.
+    """
+    # Замена обозначений дробных частей
     human_readable = latex.replace(r'\frac{', '(').replace(r'}{', ') / (').replace(r'}', ')')
+    # Замена умножения на перекрестное произведение
     human_readable = human_readable.replace(r'\cdot', '⋅')
+    # Удаление выравнивания
     human_readable = human_readable.replace(r'\left', '').replace(r'\right', '')
+    # Удаление обозначений вроде $$...$$
     human_readable = human_readable.replace('$$', '').replace('$', '')
+    # Замена двойных круглых скобок внутри двойных круглых скобок на простые
+    human_readable = re.sub(r'\(\(([^()]+)\)\)', r'(\1)', human_readable)
+    # Замена простых круглых скобок, содержащих только буквы или цифры, на сами буквы или цифры
+    human_readable = re.sub(r'\(([A-Za-z0-9_]+)\)', r'\1', human_readable)
+    # Замена круглых скобок, содержащих деление, на деление
+    human_readable = re.sub(r'\(([^()]+) / ([^()]+)\)', r'(\1 / \2)', human_readable)
+    # Замена степенной записи с градусом на символ градуса 
+    human_readable = re.sub(r'(\d+)\^{\s*\\circ\s*}', r'\1°', human_readable)
+
+    
     return human_readable
 
 async def start(update: Update, context: CallbackContext) -> None:
