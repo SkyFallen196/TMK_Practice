@@ -4,17 +4,17 @@
     ],
     "filetype": "pdf",
     "toc": [],
-    "pages": 11,
+    "pages": 9,
     "ocr_stats": {
-        "ocr_pages": 11,
+        "ocr_pages": 7,
         "ocr_failed": 0,
-        "ocr_success": 11,
+        "ocr_success": 7,
         "ocr_engine": "surya"
     },
     "block_stats": {
         "header_footer": 0,
         "code": 0,
-        "table": 14,
+        "table": 24,
         "equations": {
             "successful_ocr": 6,
             "unsuccessful_ocr": 0,
