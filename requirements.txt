@@ -13,3 +13,5 @@ telegram
 python-telegram-bot
 unstructured
 markdown
+unstructured_inference
+pillow_heif

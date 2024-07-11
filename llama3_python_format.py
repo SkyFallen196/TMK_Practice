@@ -1,18 +1,22 @@
 import os
 from dotenv import load_dotenv
-from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
+from langchain_community.llms.ollama import Ollama
+from langchain.embeddings import HuggingFaceEmbeddings
 from langchain_community.document_loaders import UnstructuredMarkdownLoader
 from langchain.prompts.prompt import PromptTemplate
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains.retrieval import create_retrieval_chain
 from langchain_community.vectorstores import Chroma
-from langchain.text_splitter import CharacterTextSplitter, RecursiveCharacterTextSplitter
+from langchain.text_splitter import CharacterTextSplitter
 
 load_dotenv('.env')
-GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
 
-llm = ChatGoogleGenerativeAI(model="models/gemini-pro", api_key=GOOGLE_API_KEY)
-embedding = GoogleGenerativeAIEmbeddings(model="models/embedding-001", api_key=GOOGLE_API_KEY)
+OLLAMA_HOST = os.getenv('OLLAMA_HOST', 'http://localhost:11434')
+OLLAMA_MODEL = os.getenv('OLLAMA_MODEL', 'llama3')
+EMBEDDING_MODEL = os.getenv('EMBEDDING_MODEL', 'sentence-transformers/all-mpnet-base-v2')
+
+llm = Ollama(base_url=OLLAMA_HOST, model=OLLAMA_MODEL)
+embedding = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)
 
 md_directory = "data/"
 md_files = [f for f in os.listdir(md_directory) if f.endswith('.md')]
@@ -47,12 +51,17 @@ db = Chroma.from_documents(all_pages, embedding)
 retriever = db.as_retriever(search_kwargs={"k": 14})
 
 template = """
-Вы - помощник с искусственным интеллектом.
-Отвечайте, исходя из предоставленного контекста.
+Ты - помощник с искусственным интеллектом.
+Отвечай, исходя из предоставленного контекста.
+Ответы должны быть только на русском языке.
 
-context: {context}
-input: {input}
-answer:
+### Контекст:
+{context}
+
+### Вопрос:
+{input}
+
+### Ответ:
 """
 
 prompt = PromptTemplate.from_template(template)
@@ -63,6 +72,3 @@ def get_response(query: str) -> str:
     response = retrieval_chain.invoke({"input": query})
     return response["answer"]
 
-# test 
-
-print(get_response("Какой предел прочности для стали 15ХМ ?"))
