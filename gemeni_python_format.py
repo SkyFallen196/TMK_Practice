@@ -6,7 +6,7 @@ from langchain.prompts.prompt import PromptTemplate
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains.retrieval import create_retrieval_chain
 from langchain_community.vectorstores import Chroma
-from langchain.text_splitter import CharacterTextSplitter, RecursiveCharacterTextSplitter
+from langchain.text_splitter import CharacterTextSplitter
 
 load_dotenv('.env')
 GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')

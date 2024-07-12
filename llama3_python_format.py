@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 from langchain_community.llms.ollama import Ollama
-from langchain.embeddings import HuggingFaceEmbeddings
+from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.document_loaders import UnstructuredMarkdownLoader
 from langchain.prompts.prompt import PromptTemplate
 from langchain.chains.combine_documents import create_stuff_documents_chain
@@ -11,7 +11,7 @@ from langchain.text_splitter import CharacterTextSplitter
 
 load_dotenv('.env')
 
-OLLAMA_HOST = os.getenv('OLLAMA_HOST', 'http://localhost:11434')
+OLLAMA_HOST = os.getenv('OLLAMA_HOST', 'https://9e1f-34-83-91-213.ngrok-free.app')
 OLLAMA_MODEL = os.getenv('OLLAMA_MODEL', 'llama3')
 EMBEDDING_MODEL = os.getenv('EMBEDDING_MODEL', 'sentence-transformers/all-mpnet-base-v2')
 
@@ -24,7 +24,7 @@ md_files = [f for f in os.listdir(md_directory) if f.endswith('.md')]
 print(f"Markdown files: {md_files}")
 
 text_splitter = CharacterTextSplitter(
-    separator=".",
+    separator="\n",
     chunk_size=2500,
     chunk_overlap=150,
     length_function=len,

@@ -7,7 +7,7 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains.retrieval import create_retrieval_chain
 from langchain_community.vectorstores import Chroma
 from langchain.text_splitter import CharacterTextSplitter
-from langchain_community.llms import YandexGPT
+from langchain_community.llms.yandex import YandexGPT
 
 load_dotenv('.env')
 YANDEX_API_KEY = os.getenv('YANDEX_API_KEY')
